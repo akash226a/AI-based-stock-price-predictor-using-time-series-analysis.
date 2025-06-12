@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Predictor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+            animation: fadeIn 1s ease-in;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #90caf9;
+        }
+
+        .upload {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            padding: 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #263238;
+            color: #fff;
+        }
+
+        .buy {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .sell {
+            background-color: #c62828;
+            color: white;
+        }
+
+        .hold {
+            background-color: #f9a825;
+            color: black;
+        }
+
+        .future-box {
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #212121;
+            border-left: 8px solid #00c853;
+            border-radius: 10px;
+            width: fit-content;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .filename {
+            text-align: center;
+            color: #ffd54f;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📈 AI Stock Prediction Dashboard  </h1>
+
+    <form class="upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv" required>
+        <button type="submit">Upload CSV</button>
+    </form>
+
+    {% if filename %}
+        <div class="filename">📁 File: <strong>{{ filename }}</strong></div>
+    {% endif %}
+
+    {% if data %}
+        <h2>📄 Recent Stock Predictions</h2>
+        <table>
+            <tr>
+                <th>Open</th>
+                <th>Close</th>
+                <th>Actual Price</th>
+                <th>Predicted Price</th>
+                <th>Suggestion</th>
+            </tr>
+            {% for row in data %}
+                <tr class="{{ row['Suggestion']|lower }}">
+                    <td>{{ row['Open'] }}</td>
+                    <td>{{ row['Close'] }}</td>
+                    <td>{{ row['Actual Price'] }}</td>
+                    <td>{{ row['Predicted Price'] }}</td>
+                    <td>{{ row['Suggestion'] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h2>📊 Price Comparison Graph</h2>
+        <div>{{ plot|safe }}</div>
+
+        <div class="future-box">
+            <h3>🔮 Future Prediction Suggestion</h3>
+            <p>Predicted next price: <strong>₹{{ future['Future Price'] }}</strong></p>
+            <p>Recommended action: <strong style="color:#00e676;">{{ future['Suggestion'] }}</strong></p>
+        </div>
+    {% endif %}
+    {% if metrics %}
+    <h2>📏 Model Evaluation Metrics</h2>
+    <table>
+        <tr>
+            <th>MAE</th>
+            <th>MSE</th>
+            <th>RMSE</th>
+            <th>R² Score</th>
+        </tr>
+        <tr>
+            <td>{{ metrics['MAE'] }}</td>
+            <td>{{ metrics['MSE'] }}</td>
+            <td>{{ metrics['RMSE'] }}</td>
+            <td>{{ metrics['R2 Score'] }}</td>
+        </tr>
+    </table>
+{% endif %}
+
+</div>
+</body>
+</html>
